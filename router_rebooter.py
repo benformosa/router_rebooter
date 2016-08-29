@@ -44,10 +44,13 @@ verbose_env = 'REBOOTER_VERBOSE'
 verbose = int(os.getenv(verbose_env, False))
 
 retry = 0
+reboot = False
+
 #Add another attempt if a reboot command was specified
 if not reset_cmd == reboot_cmd:
     reboot = True
     retry_attempts +=1
+    verbose and print('We will attempt to reboot during the {}th attempt.'.format(retry_attempts))
 
 while retry <= retry_attempts:
     verbose and print('## test attempt {}'.format(retry))
@@ -56,7 +59,7 @@ while retry <= retry_attempts:
     if OK == 0:
         verbose and print('## Everything is fine.')
         sys.exit(0)
-    elif retry < retry_attempts:
+    else:
         if reboot and retry == retry_attempts:
             verbose and print('## rebooting.')
             subprocess.call(reboot_cmd)
@@ -67,24 +70,6 @@ while retry <= retry_attempts:
             subprocess.call(reset_cmd)
             time.sleep(reset_wait)
             retry += 1
-    else:
-        print('Giving up after {} attempts'.format(retry))
-        exit(1)
-
-
-#else:
-    #If a different command is specified for reboot, run it now.
- #   if not reset_cmd == reboot_cmd:
-        #verbose and print('## rebooting.')
-        #subprocess.call(reboot_cmd)
-        #time.sleep(reboot_wait)
-        #OK = subprocess.call(test_cmd)
-        #if OK == 0:
-            #verbose and print('## Everything is fine.')
-            #sys.exit(0)
-    #print('Giving up after {} attempts'.format(retry))
-    #exit(1)
-
-
-
-
+else:
+    print('Giving up after {} retries and {} reboots.'.format(retry_attempts - int(reboot), int(reboot)))
+    exit(1)
