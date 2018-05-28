@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-#Test host's internet connection
-#Ben Formosa 2016-08-29
+"""Test this host's Internet connection. Returns 0 if Internet is reachable"""
 
 import requests
 
@@ -50,6 +49,7 @@ def test_dnss():
     return True
 
 def main():
+    # All tests must pass
     test = test_webs() and test_pings() and test_dnss()
     if test:
         exit(0)
